@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postgres Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #1f2937; /* Dark background */
+            color: #e5e7eb; /* Light text */
+            overflow-x: hidden;
+        }
+
+        /* Quiz Page */
+        .quiz-container, .score-page {
+            max-width: 800px;
+            margin: 80px auto 50px; /* Adjusted for fixed header */
+            background-color: #374151; /* Dark container background */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: #e5e7eb; /* Light text */
+            display: none;
+        }
+
+        .quiz-container.active, .score-page.active {
+            display: block;
+        }
+
+        .quiz-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #374151; /* Dark header background */
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .quiz-header h2 {
+            font-size: 24px;
+            margin: 0;
+            color: #2dd4bf; /* Teal accent for headings */
+        }
+
+        .timer {
+            font-size: 18px;
+            color: #f87171; /* Red for timer */
+            font-weight: bold;
+        }
+
+        .question-block {
+            margin-bottom: 30px;
+        }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #e5e7eb; /* Light text */
+            text-align: left;
+        }
+
+        .options {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            background-color: #4b5563; /* Slightly lighter dark background for options */
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+            color: #e5e7eb; /* Light text */
+        }
+
+        .options label:hover {
+            background-color: #6b7280; /* Hover effect with lighter background */
+        }
+
+        .options input {
+            margin-right: 15px;
+            transform: scale(1.2);
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #2dd4bf; /* Teal accent for buttons */
+            color: #1f2937; /* Dark text for contrast */
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #1e9b8a; /* Darker teal on hover */
+        }
+
+        /* Score Page */
+        .score-page h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2dd4bf; /* Teal accent for headings */
+        }
+
+        .score-page p {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #e5e7eb; /* Light text */
+        }
+
+        .score-page .home-btn {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #2dd4bf; /* Teal accent for buttons */
+            color: #1f2937; /* Dark text for contrast */
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .score-page .home-btn:hover {
+            background-color: #1e9b8a; /* Darker teal on hover */
+        }
+    </style>
+</head>
+<body>
+    <!-- Quiz Page -->
+    <div class="quiz-header">
+        <h2 id="quizTitle">Postgres Quiz</h2>
+        <div class="timer" id="timer">30:00</div>
+    </div>
+    <div class="quiz-container active" id="quizContainer">
+        <div id="questionsContainer"></div>
+        <button id="submitQuizBtn" onclick="submitQuiz()">Submit Quiz</button>
+    </div>
+
+    <!-- Score Page -->
+    <div class="score-page" id="scorePage">
+        <h2>Your Score</h2>
+        <p id="scoreResult"></p>
+        <button class="home-btn" onclick="restartQuiz()">Go to Home</button>
+    </div>
+
+    <script>
+    let quiz = null;
+    let timeLeft = 0;
+    let timerInterval = null;
+    let score = 0;
+
+    // Load quiz from JSON data
+    async function loadQuiz() {
+        try {
+            response = await fetch(`http://127.0.0.1:5000/quiz/fetchQuiz/startQuiz/${sessionStorage.getItem("testId")}`,{
+                headers:{"Content-Type":"Application/json","Authorization":`Bearer ${sessionStorage.getItem("jwt")}`}
+            })
+            data = await response.json()
+            quiz = Object.values(data).filter(item => item.id); // Extract questions from JSON
+            startQuiz(data.quizMetaData.time,data.quizMetaData.topic);
+        } catch (error) {
+            console.error('Error loading quiz:', error);
+            document.getElementById('questionsContainer').innerHTML = '<p>Error loading quiz. Please try again later.</p>';
+        }
+    }
+
+    function startQuiz(time,title) {
+        score = 0; // Reset the score
+        timeLeft = time * 60 ; // Use time from quizMetaData (30 minutes)
+        document.getElementById('quizTitle').textContent = title;
+        document.getElementById('timer').textContent = formatTime(timeLeft);
+        clearInterval(timerInterval);
+        timerInterval = setInterval(updateTimer, 1000);
+        loadQuestions();
+        document.getElementById('quizContainer').classList.add('active');
+        document.getElementById('scorePage').classList.remove('active');
+    }
+
+    function loadQuestions() {
+        const questionsContainer = document.getElementById('questionsContainer');
+        questionsContainer.innerHTML = quiz.map((question, index) => `
+            <div class="question-block">
+                <p class="question">${index + 1}. ${question.question}</p>
+                <div class="options">
+                    ${Object.keys(question.answers)
+                        .filter(key => question.answers[key]) // Only include non-null answers
+                        .map(key => `
+                            <label>
+                                <input type="radio" name="question${index}" value="${key}">
+                                ${question.answers[key]}
+                            </label>
+                        `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateTimer() {
+        timeLeft--;
+        document.getElementById('timer').textContent = formatTime(timeLeft);
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            submitQuiz();
+        }
+    }
+
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+   async function submitQuiz() {
+        clearInterval(timerInterval);
+        score = 0; // Reset score
+        answerStored = {}
+        quiz.forEach((question, index) => {
+            const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+            const correctAnswers = question.correct_answers;
+            if (selectedOption) {
+                answerStored[index.toString()] = selectedOption.value
+
+                const selectedKey = selectedOption.value;
+                if (correctAnswers[selectedKey + '_correct'] === 'true') {
+                    score++; // Increment score for a correct answer
+                }
+            }
+        });
+
+        // Show score page
+        document.getElementById('quizContainer').classList.remove('active');
+        document.getElementById('scorePage').classList.add('active');
+        const percentage = ((score / quiz.length) * 100).toFixed(2);
+        document.getElementById('scoreResult').textContent = `You scored ${score} out of ${quiz.length} (${percentage}%)`;
+        response = await fetch("http://127.0.0.1:5000/quiz/fetchQuiz/completedQuiz/",{
+            method:'POST',
+            headers:{
+                "Content-Type":"Application/json",
+                "Authorization":`Bearer ${sessionStorage.getItem("jwt")}`
+            },
+            body:JSON.stringify({quizId:sessionStorage.getItem("testId"),marks:score.toString(),answers:answerStored})
+        })
+        if(response.ok){
+            alert("DONE")
+        }
+    }
+
+    function restartQuiz() {
+        sessionStorage.setItem("testId","")
+        window.location.href = "http://127.0.0.1:5000/quizQuest/History.html"
+    }
+
+    loadQuiz();
+    </script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQuiz - Quiz History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #1f2937;
+            color: #e5e7eb;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #374151;
+            color: #e5e7eb;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar h1 {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #2dd4bf;
+        }
+        .sidebar nav {
+            width: 100%;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #e5e7eb;
+            text-decoration: none;
+            gap: 10px;
+            position: relative;
+        }
+        .sidebar a:hover {
+            background-color: #4b5563;
+        }
+        .sidebar a.active {
+            background-color: #4b5563;
+            border-left: 4px solid #2dd4bf;
+        }
+        .sidebar a span {
+            font-size: 14px;
+        }
+        .sidebar svg {
+            flex-shrink: 0;
+            stroke: #2dd4bf;
+        }
+        .tooltip {
+            visibility: hidden;
+            background-color: #111827;
+            color: #e5e7eb;
+            text-align: center;
+            padding: 5px 10px;
+            border-radius: 4px;
+            position: absolute;
+            z-index: 1;
+            left: 210px;
+            font-size: 12px;
+        }
+        .sidebar a:hover .tooltip {
+            visibility: visible;
+        }
+        button {
+  font-size: 10px;
+  width: 100px;
+  padding: 1em 1.7em;
+  font-weight: 500;
+  background: #1f2937;
+  color: white;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.6em;
+  cursor: pointer;
+}
+
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+            display: none;
+        }
+        .content.active {
+            display: block;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+        }
+        .search-bar input {
+            padding: 8px;
+            border: 1px solid #4b5563;
+            border-radius: 4px;
+            background-color: #1f2937;
+            color: #e5e7eb;
+            width: 200px;
+        }
+        .search-bar select {
+            padding: 8px;
+            border: 1px solid #4b5563;
+            border-radius: 4px;
+            background-color: #1f2937;
+            color: #e5e7eb;
+        }
+        .marks-section {
+            background-color: #374151;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-size: 16px;
+        }
+        .marks-section span {
+            color: #2dd4bf;
+            font-weight: bold;
+        }
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .quiz-card {
+            background-color: #374151;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+        .quiz-card h3 {
+            margin: 0 0 5px;
+            font-size: 18px;
+        }
+        .quiz-card .difficulty {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .quiz-card .difficulty.easy {
+            background-color: #34d399;
+            color: #1f2937;
+        }
+        .quiz-card .difficulty.medium {
+            background-color: #facc15;
+            color: #1f2937;
+        }
+        .quiz-card .difficulty.hard {
+            background-color: #f87171;
+            color: #1f2937;
+        }
+        .quiz-card .difficulty.expert {
+            background-color: #a78bfa;
+            color: #1f2937;
+        }
+        .quiz-card p {
+            margin: 5px 0;
+            color: #9ca3af;
+        }
+        .quiz-card .stats {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+            color: #e5e7eb;
+        }
+        .quiz-card .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .quiz-card .actions button {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+        }
+        .analysis-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #374151;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            display: none;
+        }
+        .analysis-container.active {
+            display: block;
+        }
+        .analysis-container h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .analysis-question {
+            margin-bottom: 20px;
+        }
+        .analysis-question p {
+            margin: 5px 0;
+        }
+        .analysis-options label {
+            display: block;
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            background-color: #4b5563;
+            border-radius: 4px;
+        }
+        .analysis-options .correct {
+            background-color: #34d399;
+            color: #1f2937;
+        }
+        .analysis-options .wrong {
+            background-color: #e74c3c;
+            color: #ffffff;
+        }
+        .analysis-options .selected {
+            border: 2px solid #2dd4bf;
+        }
+        .analysis-explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4b5563;
+            border-radius: 4px;
+            color: #e5e7eb;
+        }
+        footer {
+            margin-top: 20px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h1>CodeQuiz</h1>
+        <nav>
+            <a href="/quizQuest/Dashboard.html">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>Dashboard</span>
+                <div class="tooltip">Dashboard</div>
+            </a>
+            <a href="/quizQuest/CreateQuiz.html">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Create Quiz</span>
+                <div class="tooltip">Create Quiz</div>
+            </a>
+            <a href="/quizQuest/StoredQuiz.html" onclick="showSection('stored')">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                </svg>
+                <span>Stored Quizzes</span>
+                <div class="tooltip">Stored Quizzes</div>
+            </a>
+            <a href="/quizQuest/History.html" class="active">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>History</span>
+                <div class="tooltip">History</div>
+            </a>
+            <a href="#">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                </svg>
+                <span>Settings</span>
+                <div class="tooltip">Settings</div>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div id="history" class="content active">
+        <div class="header">
+            <h2>Quiz History</h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search quizzes..." onkeyup="searchQuizzes()">
+                <select id="filterDifficulty">
+                    <option value="all">All</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="expert">Expert</option>
+                </select>
+            </div>
+            <div class="marks-section" id="marksSection" style="display: none;">
+                Marks Obtained: <span id="marksValue">0%</span>
+            </div>
+        </div>
+        <div class="quiz-grid" id="quizGrid"></div>
+    </div>
+
+    <!-- Analysis Content -->
+    <div id="analysis" class="content">
+        <div class="analysis-container active">
+            <div class="header">
+                <h2 id="analysisTitle">Quiz Analysis</h2>
+                <div class="marks-section" id="analysisMarksSection">
+                    Marks Obtained: <span id="analysisMarksValue">0%</span>
+                </div>
+            </div>
+            <div id="analysisContent"></div>
+            <button class="home-btn" onclick="showSection('history'); clearSelection();">Back to History</button>
+        </div>
+    </div>
+
+    <footer>© 2025 CodeQuiz</footer>
+
+    <script>
+       async  function loadHistoryQuizzes() {
+            const quizGrid = document.getElementById('quizGrid');
+            quizGrid.innerHTML = '';
+            const response = await fetch("http://127.0.0.1:5000/quiz/fetchQuiz/HistoryQuiz/",{
+                method:"GET",
+                headers:{"Content-Type":"Application/json","Authorization":`Bearer ${sessionStorage.getItem('jwt')}`}
+            })
+            const data = await response.json()
+
+            data.forEach((quiz, index) => {
+                const quizCard = document.createElement('div');
+                quizCard.className = 'quiz-card';
+                quizCard.setAttribute('data-index', index);
+                quizCard.innerHTML = `
+                    <h3>${quiz.topic}</h3>
+                    <span class="difficulty ${quiz.difficulty}">${quiz.difficulty.charAt(0).toUpperCase() + quiz.difficulty.slice(1)}</span>
+                    <p>testId: ${quiz.quizId}</p>
+                    <div class="stats">
+                        <span>${quiz.totlQuestions} Questions</span>
+                    </div>
+                    <p>${quiz.completedAt}</p>
+                    <button>View Analysis</button>
+
+                `;
+                quizCard.onclick = () => showAnalysis(quiz.quizId);
+                quizGrid.appendChild(quizCard);
+            });
+        }
+
+        function searchQuizzes() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const filterDifficulty = document.getElementById('filterDifficulty').value;
+            const quizCards = document.querySelectorAll('.quiz-card');
+
+            quizCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                const difficulty = card.querySelector('.difficulty').classList[1];
+
+                const matchesSearch = title.includes(searchInput) || description.includes(searchInput);
+                const matchesDifficulty = filterDifficulty === 'all' || difficulty === filterDifficulty;
+
+                if (matchesSearch && matchesDifficulty) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function showAnalysis(quizId) {
+            sessionStorage.setItem("quizId",quizId)
+            window.location.href = "http://127.0.0.1:5000/quizQuest/historyAnalysis.html/"
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistoryQuizzes();
+            searchQuizzes();
+        });
+    </script>
+</body>
+</html>

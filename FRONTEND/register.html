@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeQuiz - Challenge Your Knowledge</title>
+    <meta name="description" content="Register for CodeQuiz - Test your knowledge with fun interactive quizzes!" />
+    <link rel="stylesheet" href="register.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  </head>
+
+  <body>
+    <div class="navContainer">
+      <div class="navLogo">
+        <div class="logoIcon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div class="brandName">CodeQuiz</div>
+      </div>
+      <div class="navLinks">
+        <a href="#" class="navLink">Home</a>
+        <a href="#" class="navLink">Quizzes</a>
+        <a href="#" class="navLink">Leaderboard</a>
+        <a href="#" class="navLink">About</a>
+      </div>
+    </div>
+
+    <div class="mainContainer">
+      <div class="contentSection">
+        <h1 class="mainHeading">Test Your Knowledge</h1>
+        <p class="mainDescription">
+          Join thousands of quiz enthusiasts and challenge yourself with our diverse range of quizzes. Register now to track your progress and compete on the leaderboard!
+        </p>
+        <div class="featuresList">
+          <div class="featureItem">
+            <svg class="checkIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Multiple Categories</span>
+          </div>
+          <div class="featureItem">
+            <svg class="checkIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Score Tracking</span>
+          </div>
+          <div class="featureItem">
+            <svg class="checkIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Daily Challenges</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="formSection">
+        <div class="formContainer">
+          <div class="formWrapper" id="registerForm">
+            <h2 class="formTitle">Create an Account</h2>
+            <p class="formDescription">Enter your details below to create your account</p>
+            
+            <form id="signupForm" onsubmit="handleRegister(event)">
+              <div class="formGroup">
+                <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail" placeholder="vikash@example.com" required>
+              </div>
+              <div class="formGroup">
+                <label for="registerUsername">Username</label>
+                <input type="text" id="registerUsername" placeholder="Sureshkumar vimalbhai patanvadiya" required>
+              </div>
+              <div class="formGroup">
+                <label for="registerPassword">Password</label>
+                <input type="password" id="registerPassword" placeholder="••••••••" required>
+              </div>
+              <div class="formGroup">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="••••••••" required>
+              </div>
+              <button type="submit" class="btnPrimary">Create Account</button>
+            </form>
+            
+            <div class="formFooter">
+              <p>Already have an account? <a href="#" class="formToggleLink" onclick="toggleForm('loginForm')" id="toogleLog">Log in</a></p>
+            </div>
+          </div>
+
+          <div class="formWrapper hidden" id="loginForm">
+            <h2 class="formTitle">Log in to CodeQuiz</h2>
+            <p class="formDescription">Enter your credentials to access your account</p>
+            
+            <form id="loginFormSub" onsubmit="handleLogin(event)">
+              <div class="formGroup">
+                <label for="loginEmail">Username</label>
+                <input type="text" id="loginEmail" placeholder="RameshBhai" required>
+              </div>
+              <div class="formGroup">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" required>
+              </div>
+              <div class="rememberForgot">
+                <div class="rememberMe">
+                  <input type="checkbox" id="rememberMe">
+                  <label for="rememberMe">Remember me</label>
+                </div>
+                <a href="#" class="forgotPassword">Forgot Password?</a>
+              </div>
+              <button type="submit" class="btnPrimary">Log in</button>
+            </form>
+            
+            <div class="formFooter">
+              <p>Don't have an account? <a id="toogleReg" class="formToggleLink" onclick="toggleForm('registerForm')">Create account</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script src="register.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/helix.js"></script>
+    <div class="loader" id="loader">
+                <l-helix id="lloder"
+            size="90"
+            speed="2.5"
+            color="rgb(100,82,226)" 
+          ></l-helix>
+    </div>
+  
+  </body>
+</html>

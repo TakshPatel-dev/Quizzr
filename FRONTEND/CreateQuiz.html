@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQuiz - Create New Quiz</title>
+    <style>
+          .loader{
+    background-color: #a7bfe44c;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  #lloder{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+  }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #1f2937;
+            color: #e5e7eb;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #374151;
+            color: #e5e7eb;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar h1 {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #2dd4bf;
+        }
+        .sidebar nav {
+            width: 100%;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #e5e7eb;
+            text-decoration: none;
+            gap: 10px;
+            position: relative;
+        }
+        .sidebar a:hover {
+            background-color: #4b5563;
+        }
+        .sidebar a.active {
+            background-color: #4b5563;
+            border-left: 4px solid #2dd4bf;
+        }
+        .sidebar a span {
+            font-size: 14px;
+        }
+        .sidebar svg {
+            flex-shrink: 0;
+            stroke: #2dd4bf;
+        }
+        .tooltip {
+            visibility: hidden;
+            background-color: #111827;
+            color: #e5e7eb;
+            text-align: center;
+            padding: 5px 10px;
+            border-radius: 4px;
+            position: absolute;
+            z-index: 1;
+            left: 210px;
+            font-size: 12px;
+        }
+        .sidebar a:hover .tooltip {
+            visibility: visible;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+        }
+        .form-container {
+            background-color: #374151;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            max-width: 800px;
+        }
+        .form-container h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #e5e7eb;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #9ca3af;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #4b5563;
+            border-radius: 4px;
+            background-color: #1f2937;
+            color: #e5e7eb;
+            box-sizing: border-box;
+        }
+        .form-group input[type="number"] {
+            width: 100px;
+        }
+        .form-group #description {
+            height: 100px;
+            resize: vertical;
+        }
+        .form-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .form-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-actions .preview {
+            background-color: #4b5563;
+            color: #e5e7eb;
+        }
+        .form-actions .create {
+            background-color: #2dd4bf;
+            color: #1f2937;
+        }
+        footer {
+            margin-top: 20px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h1>CodeQuiz</h1>
+        <nav>
+            <a href="/quizQuest/Dashboard.html">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>Dashboard</span>
+                <div class="tooltip">Dashboard</div>
+            </a>
+            <a href="/quizQuest/CreateQuiz.html" class="active">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Create Quiz</span>
+                <div class="tooltip">Create Quiz</div>
+            </a>
+            <a href="/quizQuest/StoredQuiz.html" onclick="showSection('stored')">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                </svg>
+                <span>Stored Quizzes</span>
+                <div class="tooltip">Stored Quizzes</div>
+            </a>
+            <a href="/quizQuest/History.html">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>History</span>
+                <div class="tooltip">History</div>
+            </a>
+            <a href="#">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                </svg>
+                <span>Settings</span>
+                <div class="tooltip">Settings</div>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <div class="form-container">
+            <h2>Create New Quiz</h2>
+            <form id="quizForm" onsubmit="createQuiz(event)">
+                <div class="form-group">
+                    <label for="title">Quiz Title</label>
+                    <input type="text" id="title" placeholder="Enter quiz title..." required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" placeholder="Enter quiz description..." required maxlength="200"></textarea>
+                </div>
+                <div class="form-group" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label for="language">Programming Language</label>
+                        <select id="language" required>
+                            <option value="">Select a language</option>
+                            <option value="NodeJs">NodeJs</option>
+                            <option value="WordPress">WordPress</option>
+                            <option value="java">Java</option>
+                            <option value="html">HTML</option>
+                            <option value="react">React</option>
+                            <option value="Linux">Linux</option>
+                            <option value="Bash">Bash</option>
+                            <option value="Docker">Docker</option>
+                            <option value="SQL">SQL</option>
+                            <option value="Code">Code</option>
+                            <option value="DevOps">DevOps</option>
+                            <option value="Laravel">Laravel</option>
+                            <option value="Postgres">Postgres</option>
+                            <option value="Django">Django</option>
+                            <option value="NextJs">NextJs</option>
+                            <option value="cPanel">cPanel</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="difficulty">Difficulty Level</label>
+                        <select id="difficulty" required>
+                            <option value="">Select difficulty</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="questions">Number of Questions</label>
+                        <input type="number" id="questions" value="10" min="1" max="20"required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="timeLimit">Time Limit (minutes)</label>
+                    <input type="number" id="timeLimit" value="30" min="1"max="60" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="preview">Preview</button>
+                    <button type="submit" class="create">Create Quiz</button>
+                </div>
+            </form>
+        </div>
+        <footer>© 2025 CodeQuiz</footer>
+    </div>
+
+    <script>
+       async function createQuiz(event) {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const language = document.getElementById('language').value;
+            const difficulty = document.getElementById('difficulty').value;
+            const questions = document.getElementById('questions').value;
+            const timeLimit = document.getElementById('timeLimit').value;
+
+            if (title && description && language && difficulty && questions && timeLimit) {
+                // alert(`Quiz Created!\nTitle: ${title}\nDescription: ${description}\nLanguage: ${language}\nDifficulty: ${difficulty.toLowerCase()}\nQuestions: ${questions}\nTime Limit: ${timeLimit} minutes`);
+                        const loader = document.getElementById("loader")
+                        loader.style.display = "flex"
+                const response = await fetch(`http://127.0.0.1:5000/quiz/fetchQuiz/${language.toLowerCase()}/${difficulty}/${questions}/${description}/${timeLimit}/${title}`,{
+                    method:"GET",
+                    Authorization: `Bearer ${sessionStorage.getItem('jwt')}`,
+                    headers:{"Content-Type":"Application/json","Authorization":`Bearer ${sessionStorage.getItem('jwt')}`}
+                })
+                const data = await response.json()
+                loader.style.display = "none"
+
+                alert('status: '+data.status +'\n'+ 'message: '+data.message)
+                document.getElementById('quizForm').reset();
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+    </script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/helix.js"></script>
+        <div class="loader" id="loader">
+                    <l-helix id="lloder"
+                size="70"
+                speed="2.5"
+                color="rgb(100,82,226)" 
+              ></l-helix>
+        </div>
+</body>
+</html>
