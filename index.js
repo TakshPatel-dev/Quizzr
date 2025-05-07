@@ -7,6 +7,7 @@ import {verifyingJWT,verifyCookie} from "./middlewares/verifyJWT.js"
 import quizRoute from "./routes/userQuiz.js"
 import quizHtmlRoute from "./routes/pagesRoute.js"
 import cookieParser from "cookie-parser"
+import {userLogout} from "./controllers/userLogoutController.js"
 // import path from "path"
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -27,6 +28,8 @@ app.get('/',(req,res)=>{
 })
 app.use("/register/",userRegisterRoute)
 app.use("/login",userLoginRoute)
+app.get("/logout",userLogout)
+
 
 app.use("/quizQuest",verifyCookie,quizHtmlRoute)
 app.use(verifyingJWT)

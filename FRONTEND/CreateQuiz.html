@@ -184,11 +184,11 @@
                 <span>History</span>
                 <div class="tooltip">History</div>
             </a>
-            <a href="#">
+            <a onclick="logout">
                 <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
                 </svg>
-                <span>Settings</span>
+                <span>Logout</span>
                 <div class="tooltip">Settings</div>
             </a>
         </nav>
@@ -285,6 +285,33 @@
                 alert('Please fill in all fields.');
             }
         }
+
+       async function logout(){
+            const response = await fetch(`http://127.0.0.1:5000/logout/`,{
+                    method:"GET",
+                    Authorization: `Bearer ${sessionStorage.getItem('jwt')}`,
+                    headers:{"Content-Type":"Application/json","Authorization":`Bearer ${sessionStorage.getItem('jwt')}`}
+                })
+            const res = await response.json()
+            if(res.status == 200){
+                sessionStorage.clear()
+                window.location.href = "http://127.0.0.1:5000/register/user.html"
+            }    
+            
+        }
+
+        async function logout(){
+    const response = await fetch(`http://127.0.0.1:5000/logout/`,{
+            method:"GET",
+            Authorization: `Bearer ${sessionStorage.getItem('jwt')}`,
+            headers:{"Content-Type":"Application/json","Authorization":`Bearer ${sessionStorage.getItem('jwt')}`}
+        })
+    const res = await response.json()
+    if(res.status == 200){
+        sessionStorage.clear()
+        window.location.href = "http://127.0.0.1:5000/register/user.html"
+    }    
+}
     </script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/helix.js"></script>
         <div class="loader" id="loader">

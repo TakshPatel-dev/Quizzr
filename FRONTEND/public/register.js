@@ -61,7 +61,7 @@ async function handleLogin(event) {
       showInputError('registerEmail', 'Email is required');
       hasError = true;
     } else {
-      // Simple email validation
+     
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         showInputError('registerEmail', 'Please enter a valid email address');
@@ -93,7 +93,7 @@ async function handleLogin(event) {
     if (hasError) {
       return false;
     }
-        // Simulate loading
+        
         const button = event.target.querySelector('.btnPrimary');
         const loader = document.getElementById("loader")
         loader.style.display = "flex"
@@ -107,6 +107,7 @@ async function handleLogin(event) {
    response = await x.json()
    if(response.status == "200"){
     showNotification('Registration successful! You can now login.', 'success');
+    toggleForm('loginForm')
    }if(response.status === "409"){
     showNotification("The username already exist! ",'error')
    }
@@ -169,3 +170,17 @@ async function handleLogin(event) {
       });
     });
   });
+
+  async function logout(){
+    const response = await fetch(`http://127.0.0.1:5000/logout/`,{
+            method:"GET",
+            Authorization: `Bearer ${sessionStorage.getItem('jwt')}`,
+            headers:{"Content-Type":"Application/json","Authorization":`Bearer ${sessionStorage.getItem('jwt')}`}
+        })
+    const res = await response.json()
+    if(res.status == 200){
+        sessionStorage.clear()
+        window.location.href = "http://127.0.0.1:5000/register/user.html"
+    }    
+}
+
