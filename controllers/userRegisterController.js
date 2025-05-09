@@ -5,7 +5,7 @@ import crypto from "crypto"
 
 
 const userRegisterController = async(req,res) => {
-    console.log(req.body)
+    // console.log(req.body)
     const {usrName,password,email} = req.body
     
     if(!usrName || !password || !email){

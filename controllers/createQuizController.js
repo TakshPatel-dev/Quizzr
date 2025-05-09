@@ -1,4 +1,3 @@
-import mysql from "mysql2"
 import con from "../config/connDB.js"
 import fs from "fs/promises"
 import fss from "fs"
@@ -7,7 +6,6 @@ import path from "path"
 import { fileURLToPath } from 'url';
 import  "date-fns"
 import { format } from "date-fns";
-import { json } from "stream/consumers"
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const fetchQuiz = async (req,res)=>{

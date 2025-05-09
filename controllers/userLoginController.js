@@ -9,7 +9,7 @@ const userLoginHandler = async (req,res)=>{
     if(!usrName || !password){return res.status(400).json({"message":"usrName or Password not found","status":"400"});}
     try{
     const foundUsr = await con.query("SELECT * FROM userinfo WHERE userName = ?",[usrName])
-
+        console.log(foundUsr)
     if(foundUsr[0].length == 0){return res.status(404).json({"status":"404","message":"User Not Registered"})};
     const verifyUserPwd = await bcrypt.compare(password,foundUsr[0][0].password);
     

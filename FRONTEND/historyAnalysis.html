@@ -70,7 +70,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Postgres Analysis</h1>
+            <h1 id="title">Quiz Analysis</h1>
             <div class="marks">Marks Obtained: <span id="marksValue">0.00% (0/20)</span></div>
         </div>
         <div id="analysisContent"></div>
@@ -83,7 +83,7 @@
                 headers:{"Content-Type":"Application/Json","Authorization":`Bearer ${sessionStorage.getItem('jwt')}`}
             })
         const quizData = await response.json()
-
+        document.getElementById("title").innerText = quizData.quizMetaData.topic + ' Quiz Analysis'
         // Simulated user answers (replace with actual user data if available)
         const userAnswers = quizData.answer
 
