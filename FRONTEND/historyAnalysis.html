@@ -141,6 +141,16 @@
         const percentage = ((correctCount / totalQuestions) * 100).toFixed(2);
         document.getElementById('marksValue').textContent = `${percentage}% (${correctCount}/${totalQuestions})`;
     }
+    document.addEventListener("DOMContentLoaded",()=>{
+        setTkn()
+    })
+     function setTkn(){
+        if(sessionStorage.getItem("jwt") != document.cookie.split('=')[1]){
+            console.log("changed",document.cookie.split('=')[1])
+            sessionStorage.setItem("jwt",document.cookie.split('=')[1]) 
+        }
+    }
+
     getAnalysis()
         </script>
 </body>

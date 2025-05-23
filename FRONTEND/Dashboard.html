@@ -327,9 +327,7 @@
                 <canvas id="languageDistributionChart"></canvas>
                 <div class="legend">
                     <div><span style="background-color: #2dd4bf;"></span>JavaScript</div>
-                    <div><span style="background-color: #60a5fa;"></span>Python</div>
                     <div><span style="background-color: #34d399;"></span>Java</div>
-                    <div><span style="background-color: #facc15;"></span>HTML/CSS</div>
                     <div><span style="background-color: #fb7185;"></span>React</div>
                     <div><span style="background-color: #a78bfa;"></span>Other</div>
                 </div>
@@ -358,32 +356,23 @@
                     <tbody>
                         <tr>
                             <td>JavaScript</td>
-                            <td>45</td>
-                            <td>78%</td>
+                            <td>2</td>
+                            <td>29%</td>
                             <td class="trend-up">↑ 5%</td>
                         </tr>
-                        <tr>
-                            <td>Python</td>
-                            <td>32</td>
-                            <td>84%</td>
-                            <td class="trend-up">↑ 9%</td>
-                        </tr>
+
                         <tr>
                             <td>Java</td>
-                            <td>28</td>
-                            <td>71%</td>
+                            <td>2</td>
+                            <td>30%</td>
                             <td class="trend-down">↓ 3%</td>
                         </tr>
-                        <tr>
-                            <td>HTML/CSS</td>
-                            <td>24</td>
-                            <td>92%</td>
-                            <td class="trend-up">↑ 7%</td>
-                        </tr>
+    
+                        
                         <tr>
                             <td>React</td>
-                            <td>18</td>
-                            <td>68%</td>
+                            <td>2</td>
+                            <td>29%</td>
                             <td class="trend-down">↓ 7%</td>
                         </tr>
                     </tbody>
@@ -412,6 +401,17 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded",()=>{
+        setTkn()
+    })
+    function setTkn(){
+        if(sessionStorage.getItem("jwt") != document.cookie.split('=')[1]){
+            console.log("changed",document.cookie.split('=')[1])
+            sessionStorage.setItem("jwt",document.cookie.split('=')[1]) 
+        }
+    }
+    
+
         // Monthly Activity Chart
         const monthlyActivityCtx = document.getElementById('monthlyActivityChart').getContext('2d');
         new Chart(monthlyActivityCtx, {
@@ -455,10 +455,10 @@
         new Chart(languageDistributionCtx, {
             type: 'doughnut',
             data: {
-                labels: ['JavaScript', 'Python', 'Java', 'HTML/CSS', 'React', 'Other'],
+                labels: ['JavaScript', 'Java','React', 'Other'],
                 datasets: [{
-                    data: [30, 25, 20, 15, 5, 5],
-                    backgroundColor: ['#2dd4bf', '#60a5fa', '#34d399', '#facc15', '#fb7185', '#a78bfa']
+                    data: [30, 20, 5, 5],
+                    backgroundColor: ['#2dd4bf', '#34d399', '#facc15', '#a78bfa']
                 }]
             },
             options: {
@@ -484,6 +484,8 @@
             }
         });
 
+
+      
 
         async function kpis(){
            let totalQuestion = 0

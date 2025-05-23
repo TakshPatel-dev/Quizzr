@@ -1,4 +1,3 @@
-// import { response } from "express";
 
 
 function toggleForm(formId) {
@@ -13,7 +12,7 @@ async function handleLogin(event) {
     
     const usrName = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
-    
+    const rememberMe = document.getElementById('rememberMe').checked
     if (!usrName || !password) {
       showNotification('Please fill in all fields', 'error');
       return false;
@@ -26,7 +25,7 @@ async function handleLogin(event) {
     const x = await fetch("http://127.0.0.1:5000/login/user",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({usrName:usrName,password:password})
+      body:JSON.stringify({usrName:usrName,password:password,rememberMe})
     })
     response = await x.json()
     if(!response){showNotification("INTERNAL SERVER ERROR","error")}

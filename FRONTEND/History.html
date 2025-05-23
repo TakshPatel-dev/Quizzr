@@ -293,7 +293,7 @@
             <h2>Quiz History</h2>
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search quizzes..." onkeyup="searchQuizzes()">
-                <select id="filterDifficulty">
+                <select id="filterDifficulty" onclick="searchQuizzes()">
                     <option value="all">All</option>
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
@@ -325,6 +325,7 @@
     <footer>© 2025 CodeQuiz</footer>
 
     <script>
+   
        async  function loadHistoryQuizzes() {
             const quizGrid = document.getElementById('quizGrid');
             quizGrid.innerHTML = '';
@@ -394,9 +395,16 @@
 
         // Initial load
         document.addEventListener('DOMContentLoaded', () => {
+            setTkn()
             loadHistoryQuizzes();
             searchQuizzes();
         });
+    function setTkn(){
+        if(sessionStorage.getItem("jwt") != document.cookie.split('=')[1]){
+            console.log("changed",document.cookie.split('=')[1])
+            sessionStorage.setItem("jwt",document.cookie.split('=')[1]) 
+        }
+    }
     </script>
 </body>
 </html>

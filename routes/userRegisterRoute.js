@@ -11,6 +11,10 @@ route.post("/reg",userRegisterController)
 route.use(express.static("./FRONTEND/public"))
 
 route.get("/user.html",(req,res)=>{
+  
+    if(req.cookies.jwt || req.cookies.jwt2){
+        res.redirect("http://127.0.0.1:5000/quizQuest/Dashboard.html")
+    }
     res.sendFile(path.join(__dirname,"../FRONTEND/register.html"))
 })
 export default route
