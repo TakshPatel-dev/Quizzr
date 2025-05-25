@@ -4,152 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeQuiz - Create New Quiz</title>
-    <style>
-          .loader{
-    background-color: #a7bfe44c;
-    width: 100vw;
-    height: 100vh;
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-  }
-  #lloder{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-
-  }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #1f2937;
-            color: #e5e7eb;
-        }
-        .sidebar {
-            width: 200px;
-            background-color: #374151;
-            color: #e5e7eb;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .sidebar h1 {
-            font-size: 20px;
-            margin-bottom: 30px;
-            color: #2dd4bf;
-        }
-        .sidebar nav {
-            width: 100%;
-        }
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            color: #e5e7eb;
-            text-decoration: none;
-            gap: 10px;
-            position: relative;
-        }
-        .sidebar a:hover {
-            background-color: #4b5563;
-        }
-        .sidebar a.active {
-            background-color: #4b5563;
-            border-left: 4px solid #2dd4bf;
-        }
-        .sidebar a span {
-            font-size: 14px;
-        }
-        .sidebar svg {
-            flex-shrink: 0;
-            stroke: #2dd4bf;
-        }
-        .tooltip {
-            visibility: hidden;
-            background-color: #111827;
-            color: #e5e7eb;
-            text-align: center;
-            padding: 5px 10px;
-            border-radius: 4px;
-            position: absolute;
-            z-index: 1;
-            left: 210px;
-            font-size: 12px;
-        }
-        .sidebar a:hover .tooltip {
-            visibility: visible;
-        }
-        .content {
-            margin-left: 200px;
-            padding: 20px;
-        }
-        .form-container {
-            background-color: #374151;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            max-width: 800px;
-        }
-        .form-container h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #e5e7eb;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #9ca3af;
-        }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #4b5563;
-            border-radius: 4px;
-            background-color: #1f2937;
-            color: #e5e7eb;
-            box-sizing: border-box;
-        }
-        .form-group input[type="number"] {
-            width: 100px;
-        }
-        .form-group #description {
-            height: 100px;
-            resize: vertical;
-        }
-        .form-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        .form-actions button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .form-actions .preview {
-            background-color: #4b5563;
-            color: #e5e7eb;
-        }
-        .form-actions .create {
-            background-color: #2dd4bf;
-            color: #1f2937;
-        }
-        footer {
-            margin-top: 20px;
-            color: #6b7280;
-        }
-    </style>
+    <link href="createQuiz.css" rel="stylesheet">
 </head>
 <body>
     <!-- Sidebar -->
@@ -189,7 +44,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
                 </svg>
                 <span>Logout</span>
-                <div class="tooltip">Settings</div>
+                <div class="tooltip">Logout</div>
             </a>
         </nav>
     </div>
@@ -257,72 +112,9 @@
         <footer>© 2025 CodeQuiz</footer>
     </div>
 
-    <script>
-       async function createQuiz(event) {
-            event.preventDefault();
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-            const language = document.getElementById('language').value;
-            const difficulty = document.getElementById('difficulty').value;
-            const questions = document.getElementById('questions').value;
-            const timeLimit = document.getElementById('timeLimit').value;
+    <script src="createQuiz.js"></script>
 
-            if (title && description && language && difficulty && questions && timeLimit) {
-                // alert(`Quiz Created!\nTitle: ${title}\nDescription: ${description}\nLanguage: ${language}\nDifficulty: ${difficulty.toLowerCase()}\nQuestions: ${questions}\nTime Limit: ${timeLimit} minutes`);
-                        const loader = document.getElementById("loader")
-                        loader.style.display = "flex"
-                const response = await fetch(`http://127.0.0.1:5000/quiz/fetchQuiz/${language.toLowerCase()}/${difficulty}/${questions}/${description}/${timeLimit}/${title}`,{
-                    method:"GET",
-                    Authorization: `Bearer ${sessionStorage.getItem('jwt')}`,
-                    headers:{"Content-Type":"Application/json","Authorization":`Bearer ${sessionStorage.getItem('jwt')}`}
-                })
-                const data = await response.json()
-                loader.style.display = "none"
-
-                alert('status: '+data.status +'\n'+ 'message: '+data.message)
-                document.getElementById('quizForm').reset();
-            } else {
-                alert('Please fill in all fields.');
-            }
-        }
-
-       async function logout(){
-            const response = await fetch(`http://127.0.0.1:5000/logout/`,{
-                    method:"GET",
-                    Authorization: `Bearer ${sessionStorage.getItem('jwt')}`,
-                    headers:{"Content-Type":"Application/json","Authorization":`Bearer ${sessionStorage.getItem('jwt')}`}
-                })
-            const res = await response.json()
-            if(res.status == 200){
-                sessionStorage.clear()
-                window.location.href = "http://127.0.0.1:5000/register/user.html"
-            }    
-            
-        }
-
-        async function logout(){
-    const response = await fetch(`http://127.0.0.1:5000/logout/`,{
-            method:"GET",
-            Authorization: `Bearer ${sessionStorage.getItem('jwt')}`,
-            headers:{"Content-Type":"Application/json","Authorization":`Bearer ${sessionStorage.getItem('jwt')}`}
-        })
-    const res = await response.json()
-    if(res.status == 200){
-        sessionStorage.clear()
-        window.location.href = "http://127.0.0.1:5000/register/user.html"
-    }    
-}
-document.addEventListener("DOMContentLoaded",()=>{
-        setTkn()
-    })
-     function setTkn(){
-        if(sessionStorage.getItem("jwt") != document.cookie.split('=')[1]){
-            console.log("changed",document.cookie.split('=')[1])
-            sessionStorage.setItem("jwt",document.cookie.split('=')[1]) 
-        }
-    }
-    </script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/helix.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/helix.js"></script>
         <div class="loader" id="loader">
                     <l-helix id="lloder"
                 size="70"

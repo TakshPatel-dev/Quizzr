@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // route.post("/user",userLoginController)
-
+route.use(express.static("./FRONTEND/public"))
 route.get("/Dashboard.html",(req,res)=>{
     res.sendFile(path.join(__dirname,"..","FRONTEND","Dashboard.html"))
 })

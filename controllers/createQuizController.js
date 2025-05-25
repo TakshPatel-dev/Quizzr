@@ -54,10 +54,10 @@ const completeQuiz =async (req,res)=>{
     const x = await fs.readFile(path.join(__dirname,"..","CreatedQuiz",`${req.body.quizId}.json`),"utf8")
    const xx =JSON.parse(x)
    const newData = {...xx,marks:req.body.marks,answer:req.body.answers}
-    await fs.writeFile(path.join(__dirname,"..","CompletedQuiz",`${req.body.quizId}.json`),JSON.stringify(newData),"utf8")
-    fs.unlink(path.join(__dirname,"..","CreatedQuiz",`${req.body.quizId}.json`))
     con.query("INSERT INTO completedQuizData (quizId,userId,difficulty,topic,totlQuestions,completedAt,description,time,marks) VALUES(?,?,?,?,?,?,?,?,?)",[req.body.quizId,newData.quizMetaData.createdBy,newData.quizMetaData.difficulty,newData.quizMetaData.topic,newData.quizMetaData.totalQuestions,Tdate,newData.quizMetaData.description,newData.quizMetaData.time,newData.marks])
     con.query("DELETE FROM createdquizdata where quizId = ?",[req.body.quizId])
+    await fs.writeFile(path.join(__dirname,"..","CompletedQuiz",`${req.body.quizId}.json`),JSON.stringify(newData),"utf8")
+    fs.unlink(path.join(__dirname,"..","CreatedQuiz",`${req.body.quizId}.json`))
     return res.json({"status":200,message:"Quiz Given"})
 
     }catch(e){
