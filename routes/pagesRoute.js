@@ -26,7 +26,7 @@ route.get("/StoredQuiz.html",(req,res)=>{
 route.get("/Questions.html",(req,res)=>{
     res.sendFile(path.join(__dirname,"..","FRONTEND","Question.html"))
 })
-route.get("/historyAnalysis.html/",(req,res)=>{
+route.get("/historyAnalysis.html",(req,res)=>{
     res.sendFile(path.join(__dirname,"..","FRONTEND","historyAnalysis.html"))
 })
 export default route

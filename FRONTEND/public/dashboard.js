@@ -7,9 +7,40 @@
             sessionStorage.setItem("jwt",document.cookie.split('=')[1]) 
         }
     }
-    
 
-        // Monthly Activity Chart
+    async function getDataForGraphs(){
+
+        const graphData = await fetch("http://127.0.0.1:5000/quiz/dashboard/getGraphsParams",{
+            headers:{"Content-Type":"Application/json",Authorization:`Bearer ${sessionStorage.getItem("jwt")}`}
+         })
+        const graphDataResponse = await graphData.json()
+        const modifiedGraphDataResponse = {languageLabel : [],languageData: [],difficultyLabel:[],difficultyData:[],quizTrendCardTopic:[],quizTrendCardAvgMarks:[],quizTrendCardTotalQuiz:[],latestMarks:graphDataResponse.latestMarks}
+
+        graphDataResponse.uniqueQuizTopicCreatedData.forEach(obj => {
+            modifiedGraphDataResponse.languageLabel.push(obj.topic)
+            modifiedGraphDataResponse.languageData.push(obj.totalQuiz)
+        })
+        graphDataResponse.uniqueQuizDifficultyCreatedData.forEach(obj => {
+            modifiedGraphDataResponse.difficultyLabel.push(obj.difficulty)
+            modifiedGraphDataResponse.difficultyData.push(obj.totalQuiz)
+        })
+
+        graphDataResponse.quizTrendCard.forEach(obj =>{
+            modifiedGraphDataResponse.quizTrendCardTopic.push(obj.topic)
+            modifiedGraphDataResponse.quizTrendCardAvgMarks.push((parseFloat(obj.avgMarks)/parseFloat(obj.avgTotlQuestions)) * 100)
+            modifiedGraphDataResponse.quizTrendCardTotalQuiz.push(obj.totalQuiz)
+        })
+
+
+        // console.log(modifiedGraphDataResponse)
+        return modifiedGraphDataResponse
+    }
+    
+      
+    async function displayGraphs(){
+        datae = await getDataForGraphs()
+        console.log(datae)
+          // Monthly Activity Chart
         const monthlyActivityCtx = document.getElementById('monthlyActivityChart').getContext('2d');
         new Chart(monthlyActivityCtx, {
             type: 'line',
@@ -52,15 +83,16 @@
         new Chart(languageDistributionCtx, {
             type: 'doughnut',
             data: {
-                labels: ['JavaScript', 'Java','React', 'Other'],
+                labels: datae.languageLabel,
                 datasets: [{
-                    data: [30, 20, 5, 5],
-                    backgroundColor: ['#2dd4bf', '#34d399', '#facc15', '#a78bfa']
+                    data: datae.languageData,
                 }]
             },
+                
             options: {
                 cutout: '70%',
-                plugins: { legend: { display: false } }
+                plugins: { legend: { display:false}
+            }
             }
         });
 
@@ -69,10 +101,9 @@
         new Chart(difficultyDistributionCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Easy', 'Medium', 'Hard', 'Expert'],
+                labels: datae.difficultyLabel,
                 datasets: [{
-                    data: [40, 30, 20, 10],
-                    backgroundColor: ['#34d399', '#facc15', '#f87171', '#a78bfa']
+                    data: datae.difficultyData,
                 }]
             },
             options: {
@@ -81,7 +112,39 @@
             }
         });
 
+        const quizTrendCard = document.getElementById("quizTrendCard")
 
+        datae.quizTrendCardTopic.forEach((ele,index) => {
+            let tr = document.createElement("tr")
+            let topic = document.createElement("td")
+            let totlQuiz = document.createElement("td")
+            let averageMarks = document.createElement("td")
+            let trend = document.createElement("td")
+
+            topic.textContent = ele
+            totlQuiz.textContent = Math.round(parseFloat(datae.quizTrendCardTotalQuiz[index]))
+            averageMarks.textContent = Math.round(parseFloat(datae.quizTrendCardAvgMarks[index])) + "%"
+            trendResult = (datae.latestMarks[index] - Math.round(datae.quizTrendCardAvgMarks[index],2) / Math.round(datae.quizTrendCardAvgMarks[index]),2) * 100
+            trend.textContent = Math.abs(Math.round(trendResult,2))
+            if(trendResult < 0){
+                trend.classList.add("trend-down")
+                trend.textContent = '↓ '+ (Math.round(datae.quizTrendCardAvgMarks[index],2)).toString()+"%"
+
+            }else{
+                 trend.classList.add("trend-up")
+                trend.textContent = '↑ '+ (Math.round(datae.quizTrendCardAvgMarks[index],2)).toString()+"%"
+            }
+        
+            tr.appendChild(topic)
+            tr.appendChild(totlQuiz)
+            tr.appendChild(averageMarks)
+            tr.appendChild(trend)
+            quizTrendCard.appendChild(tr)
+
+            // let totlQuiz = document.createElement("td")
+        })
+
+    }
       
 
         async function kpis(){
@@ -124,3 +187,4 @@
         window.location.href = "http://127.0.0.1:5000/register/user.html"
     }    
 }
+displayGraphs()
