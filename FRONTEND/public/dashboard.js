@@ -14,7 +14,8 @@
             headers:{"Content-Type":"Application/json",Authorization:`Bearer ${sessionStorage.getItem("jwt")}`}
          })
         const graphDataResponse = await graphData.json()
-        const modifiedGraphDataResponse = {languageLabel : [],languageData: [],difficultyLabel:[],difficultyData:[],quizTrendCardTopic:[],quizTrendCardAvgMarks:[],quizTrendCardTotalQuiz:[],latestMarks:graphDataResponse.latestMarks}
+    
+            const modifiedGraphDataResponse = {languageLabel : [],languageData: [],difficultyLabel:[],difficultyData:[],quizTrendCardTopic:[],quizTrendCardAvgMarks:[],quizTrendCardTotalQuiz:[],latestMarks:graphDataResponse.latestMarks}
 
         graphDataResponse.uniqueQuizTopicCreatedData.forEach(obj => {
             modifiedGraphDataResponse.languageLabel.push(obj.topic)
@@ -31,15 +32,25 @@
             modifiedGraphDataResponse.quizTrendCardTotalQuiz.push(obj.totalQuiz)
         })
 
-
-        // console.log(modifiedGraphDataResponse)
+        if (modifiedGraphDataResponse.languageLabel.length === 0 && modifiedGraphDataResponse.difficultyLabel.length === 0){
+            return 0
+        }
         return modifiedGraphDataResponse
     }
     
       
     async function displayGraphs(flag){
-                datae = await getDataForGraphs()
-
+    datae = await getDataForGraphs()
+    console.log(datae)
+    if(datae === 0){
+       const chartCont = document.querySelectorAll(".chart-container")
+       const tableCont = document.querySelector(".table-container")
+       Array.from(chartCont).forEach(ele=>{
+        ele.innerHTML = "<h4> Give atleast 1 test for analysis </h4>"
+       })
+       tableCont.innerHTML = '<h4> Give atleast 1 test for analysis </h4>'
+        return 0
+    }   
     if(flag){
          const monthlyActivityCtx = document.getElementById('monthlyActivityChart').getContext('2d');
         new Chart(monthlyActivityCtx, {
@@ -91,8 +102,11 @@
                 
             options: {
                 cutout: '70%',
-                plugins: { legend: { display:false}
-            }
+                plugins:{
+                labels: {
+                render: 'label'
+                }
+}
             }
         });
 
@@ -108,7 +122,7 @@
             },
             options: {
                 cutout: '70%',
-                plugins: { legend: { display: false } }
+                plugins: { legend: { display: true } }
             }
         });
     }
@@ -184,7 +198,14 @@
                 marks = marks + parseInt(test.marks)
             });
             totalTest = (data.length) + (data2.length)
-            averageMarks = (marks/totalQuestion) * 100
+
+            if(totalQuestion == 0){
+                averageMarks = 0
+            }else{
+                 averageMarks = (marks/totalQuestion) * 100
+
+            }
+            
             document.getElementById("totalQuizzesCompleted").textContent = data.length
             document.getElementById("totalQuizzes").textContent = (totalTest)
             document.getElementById("totalQuestion").textContent = totalQuestion

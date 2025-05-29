@@ -88,10 +88,10 @@ async function handleLogin(event) {
       showInputError('confirmPassword', 'Passwords do not match');
       hasError = true;
     }
-    
-    if (hasError) {
+        if (hasError) {
       return false;
     }
+
         
         const button = event.target.querySelector('.btnPrimary');
         const loader = document.getElementById("loader")
@@ -109,11 +109,15 @@ async function handleLogin(event) {
     toggleForm('loginForm')
    }if(response.status === "409"){
     showNotification("The username already exist! ",'error')
+    hasError = true
+    setInterval(()=>{
+          window.location.reload()
+
+    },1500)
+    
    }
    loader.style.display = "none"
-
-
-  }
+   }
   
   // Function to clear all error messages
   function clearErrors() {

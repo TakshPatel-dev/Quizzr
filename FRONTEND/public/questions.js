@@ -81,7 +81,7 @@ window.addEventListener("beforeunload",()=>{
     function loadQuestions() {
         const questionsContainer = document.getElementById('questionsContainer');
         questionsContainer.innerHTML = quiz.map((question, index) => `
-            <div class="question-block">
+            <div class="question-block unselectable">
                 <p class="question">${index + 1}. ${question.question}</p>
                 <div class="options">
                     ${Object.keys(question.answers)

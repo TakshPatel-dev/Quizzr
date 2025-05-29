@@ -11,10 +11,11 @@ const dashboardGraphParams = async (req,res)=>{
      const tempArr = await Promise.all(
             quizTrendCard[0].map(async (obj) => {
                 const latestMarks = await con.query(
-                    "SELECT topic,marks FROM completedQuizData WHERE userId = ? AND completedAt = (SELECT MAX(completedAt) FROM completedQuizData WHERE userId = ? AND topic = ?);",
+                    "SELECT topic,marks,totlQuestions FROM completedQuizData WHERE userId = ? AND completedAt = (SELECT MAX(completedAt) FROM completedQuizData WHERE userId = ? AND topic = ?);",
                     [res.userId, res.userId, obj.topic]
                 );
-                return latestMarks[0][0].marks;
+                console.log( parseFloat(latestMarks[0][0].marks) / parseFloat(latestMarks[0][0].totlQuestions) * 100)
+                return parseFloat(latestMarks[0][0].marks) / parseFloat(latestMarks[0][0].totlQuestions) * 100;
             })
         );
         return res.status(200).json({quizTrendCard:quizTrendCard[0],uniqueQuizDifficultyCreatedData:uniqueQuizDifficultyCreatedData[0],uniqueQuizTopicCreatedData:uniqueQuizTopicCreatedData[0],latestMarks:tempArr})
