@@ -37,11 +37,11 @@
     }
     
       
-    async function displayGraphs(){
-        datae = await getDataForGraphs()
-        console.log(datae)
-          // Monthly Activity Chart
-        const monthlyActivityCtx = document.getElementById('monthlyActivityChart').getContext('2d');
+    async function displayGraphs(flag){
+                datae = await getDataForGraphs()
+
+    if(flag){
+         const monthlyActivityCtx = document.getElementById('monthlyActivityChart').getContext('2d');
         new Chart(monthlyActivityCtx, {
             type: 'line',
             data: {
@@ -111,10 +111,18 @@
                 plugins: { legend: { display: false } }
             }
         });
+    }
+       
+          // Monthly Activity Chart
+       
 
         const quizTrendCard = document.getElementById("quizTrendCard")
-
+        quizTrendCard.innerHTML = ''
         datae.quizTrendCardTopic.forEach((ele,index) => {
+
+            if(index >= 3 && flag){
+                return 
+            }
             let tr = document.createElement("tr")
             let topic = document.createElement("td")
             let totlQuiz = document.createElement("td")
@@ -124,16 +132,25 @@
             topic.textContent = ele
             totlQuiz.textContent = Math.round(parseFloat(datae.quizTrendCardTotalQuiz[index]))
             averageMarks.textContent = Math.round(parseFloat(datae.quizTrendCardAvgMarks[index])) + "%"
-            trendResult = (datae.latestMarks[index] - Math.round(datae.quizTrendCardAvgMarks[index],2) / Math.round(datae.quizTrendCardAvgMarks[index]),2) * 100
-            trend.textContent = Math.abs(Math.round(trendResult,2))
+            trendResult = ((datae.latestMarks[index] - (datae.quizTrendCardAvgMarks[index])) / (datae.quizTrendCardAvgMarks[index])) * 100
+            console.log(trendResult,)
             if(trendResult < 0){
+                
                 trend.classList.add("trend-down")
-                trend.textContent = '↓ '+ (Math.round(datae.quizTrendCardAvgMarks[index],2)).toString()+"%"
+                trend.textContent = '↓'+ Math.round(Math.abs(trendResult),2).toString()+"%"
 
             }else{
+
+               
                  trend.classList.add("trend-up")
-                trend.textContent = '↑ '+ (Math.round(datae.quizTrendCardAvgMarks[index],2)).toString()+"%"
+                  if(datae.quizTrendCardAvgMarks[index] == 0){
+                 trend.textContent = '---'   
+                }else{
+
+                
+                trend.textContent = '↑'+ Math.round(Math.abs(trendResult),2).toString()+"%"
             }
+        }
         
             tr.appendChild(topic)
             tr.appendChild(totlQuiz)
@@ -187,4 +204,7 @@
         window.location.href = "http://127.0.0.1:5000/register/user.html"
     }    
 }
-displayGraphs()
+
+document.addEventListener("DOMContentLoaded",()=>{
+    displayGraphs(1)
+})

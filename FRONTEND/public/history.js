@@ -18,7 +18,7 @@
                     <div class="stats">
                         <span>${quiz.totlQuestions} Questions</span>
                     </div>
-                    <p>${quiz.completedAt}</p>
+                    <p id="testCompletedDate">${quiz.completedAt}</p>
                     <button>View Analysis</button>
 
                 `;
@@ -35,9 +35,10 @@
             quizCards.forEach(card => {
                 const title = card.querySelector('h3').textContent.toLowerCase();
                 const description = card.querySelector('p').textContent.toLowerCase();
+                const completedAt = card.querySelector('#testCompletedDate').textContent.toLowerCase();
                 const difficulty = card.querySelector('.difficulty').classList[1];
 
-                const matchesSearch = title.includes(searchInput) || description.includes(searchInput);
+                const matchesSearch = title.includes(searchInput) || description.includes(searchInput) || completedAt.includes(searchInput);
                 const matchesDifficulty = filterDifficulty === 'all' || difficulty === filterDifficulty;
 
                 if (matchesSearch && matchesDifficulty) {
