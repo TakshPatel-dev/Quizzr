@@ -18,7 +18,13 @@ const dashboardGraphParams = async (req,res)=>{
                 return parseFloat(latestMarks[0][0].marks) / parseFloat(latestMarks[0][0].totlQuestions) * 100;
             })
         );
-        return res.status(200).json({quizTrendCard:quizTrendCard[0],uniqueQuizDifficultyCreatedData:uniqueQuizDifficultyCreatedData[0],uniqueQuizTopicCreatedData:uniqueQuizTopicCreatedData[0],latestMarks:tempArr})
+
+
+            const LastQuizCreated = await con.query("SELECT topic,totlQuestions,createdAt FROM createdQuizData WHERE userId = ? AND createdAt = (SELECT MAX(createdAt) FROM createdQuizData WHERE userId = ? );",[res.userId,res.userId])
+            const LastQuizCompleted = await con.query("SELECT topic,marks,totlQuestions,completedAt FROM completedQuizData WHERE userId = ? AND completedAt = (SELECT MAX(completedAt) FROM completedQuizData WHERE userId = ? );",[res.userId,res.userId])
+            console.log(LastQuizCompleted[0])
+            console.log(LastQuizCreated[0])
+            return res.status(200).json({quizTrendCard:quizTrendCard[0],uniqueQuizDifficultyCreatedData:uniqueQuizDifficultyCreatedData[0],uniqueQuizTopicCreatedData:uniqueQuizTopicCreatedData[0],latestMarks:tempArr,LastQuizCompleted:LastQuizCompleted[0],LastQuizCreated:LastQuizCreated[0]})
 
     
 

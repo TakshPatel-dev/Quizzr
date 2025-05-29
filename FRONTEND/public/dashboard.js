@@ -15,7 +15,7 @@
          })
         const graphDataResponse = await graphData.json()
     
-            const modifiedGraphDataResponse = {languageLabel : [],languageData: [],difficultyLabel:[],difficultyData:[],quizTrendCardTopic:[],quizTrendCardAvgMarks:[],quizTrendCardTotalQuiz:[],latestMarks:graphDataResponse.latestMarks}
+        const modifiedGraphDataResponse = {languageLabel : [],languageData: [],difficultyLabel:[],difficultyData:[],quizTrendCardTopic:[],quizTrendCardAvgMarks:[],quizTrendCardTotalQuiz:[],latestMarks:graphDataResponse.latestMarks,LastQuizCompleted:graphDataResponse.LastQuizCompleted,LastQuizCreated:graphDataResponse.LastQuizCreated}
 
         graphDataResponse.uniqueQuizTopicCreatedData.forEach(obj => {
             modifiedGraphDataResponse.languageLabel.push(obj.topic)
@@ -40,6 +40,7 @@
     
       
     async function displayGraphs(flag){
+
     datae = await getDataForGraphs()
     console.log(datae)
     if(datae === 0){
@@ -52,6 +53,99 @@
         return 0
     }   
     if(flag){
+        let html = `<h3>Recent Activity</h3>`
+
+        if(datae.LastQuizCompleted.legend == 0 && datae.LastQuizCreated.length == 0){
+            html += '<h4>No Recent Records</h4>'
+        }else if(datae.LastQuizCompleted.length == 0){
+             const titleMsg = datae.LastQuizCreated[0].topic + ' Quiz Created'
+            const Date1 = new Date()
+            const Date2Split = datae.LastQuizCreated[0].createdAt.split('/')
+            const DateSpaceSplit = Date2Split[2].split('\t')
+            const DateColonSplit = DateSpaceSplit[1].split(':')
+            const date2toMs =( parseFloat(DateColonSplit[0]) * 60 *60 * 1000 ) + (parseFloat(DateColonSplit[1]) * 60 * 1000) + (parseFloat(DateColonSplit[2] * 1000))
+            const Date2 = new Date(`${Date2Split[1]}/${Date2Split[0]}/${DateSpaceSplit[0]}`)
+            const dateDiffHr = Math.floor((Math.abs((Date1 - Date2) - date2toMs) / (60*60*1000)))
+            const msgAndTime = 'The test containes ' + datae.LastQuizCreated[0].totlQuestions + ` Questions <b>• ${dateDiffHr} Hrs Ago</b>`
+            
+            html += `<div class="activity-item">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <div>
+                    <p>${titleMsg}</p>
+                    <p class="time">${msgAndTime}</p>
+                </div>
+            </div>`}
+        else if (datae.LastQuizCreated.length == 0){
+            const titleMsg = datae.LastQuizCompleted[0].topic + ' Quiz Completed'
+            const Date1 = new Date()
+            const Date2Split = datae.LastQuizCompleted[0].completedAt.split('/')
+            const DateSpaceSplit = Date2Split[2].split('\t')
+            const DateColonSplit = DateSpaceSplit[1].split(':')
+            const date2toMs =( parseFloat(DateColonSplit[0]) * 60 *60 * 1000 ) + (parseFloat(DateColonSplit[1]) * 60 * 1000) + (parseFloat(DateColonSplit[2] * 1000))
+            const Date2 = new Date(`${Date2Split[1]}/${Date2Split[0]}/${DateSpaceSplit[0]}`)
+            const dateDiffHr = Math.floor((Math.abs((Date1 - Date2) - date2toMs) / (60*60*1000)))
+            const msgAndTime = 'The test containes ' + datae.LastQuizCompleted[0].totlQuestions + ` Questions <b>• ${dateDiffHr} Hrs Ago</b>`
+            
+            html += `<div class="activity-item">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <div>
+                    <p>${titleMsg}</p>
+                    <p class="time">${msgAndTime}</p>
+                </div>
+            </div>`
+
+        }else{
+            let titleMsg = datae.LastQuizCreated[0].topic + ' Quiz Created'
+            let Date1 = new Date()
+            let Date2Split = datae.LastQuizCreated[0].createdAt.split('/')
+            let DateSpaceSplit = Date2Split[2].split('\t')
+            let DateColonSplit = DateSpaceSplit[1].split(':')
+            let date2toMs =( parseFloat(DateColonSplit[0]) * 60 *60 * 1000 ) + (parseFloat(DateColonSplit[1]) * 60 * 1000) + (parseFloat(DateColonSplit[2] * 1000))
+            let Date2 = new Date(`${Date2Split[1]}/${Date2Split[0]}/${DateSpaceSplit[0]}`)
+            let dateDiffHr = Math.floor((Math.abs((Date1 - Date2) - date2toMs) / (60*60*1000)))
+            let msgAndTime = 'The test containes ' + datae.LastQuizCreated[0].totlQuestions + ` Questions <b>• ${dateDiffHr} Hrs Ago</b>`
+            
+            html += `<div class="activity-item">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <div>
+                    <p>${titleMsg}</p>
+                    <p class="time">${msgAndTime}</p>
+                </div>
+            </div>`
+             titleMsg = datae.LastQuizCompleted[0].topic + ' Quiz Completed'
+             Date1 = new Date()
+             Date2Split = datae.LastQuizCompleted[0].completedAt.split('/')
+             DateSpaceSplit = Date2Split[2].split('\t')
+             DateColonSplit = DateSpaceSplit[1].split(':')
+             date2toMs =( parseFloat(DateColonSplit[0]) * 60 *60 * 1000 ) + (parseFloat(DateColonSplit[1]) * 60 * 1000) + (parseFloat(DateColonSplit[2] * 1000))
+             Date2 = new Date(`${Date2Split[1]}/${Date2Split[0]}/${DateSpaceSplit[0]}`)
+             dateDiffHr = Math.floor((Math.abs((Date1 - Date2) - date2toMs) / (60*60*1000)))
+             msgAndTime = 'The test containes ' + datae.LastQuizCompleted[0].totlQuestions + ` Questions <b>• ${dateDiffHr} Hrs Ago</b>`
+            
+            html += `<div class="activity-item">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <div>
+                    <p>${titleMsg}</p>
+                    <p class="time">${msgAndTime}</p>
+                </div>
+            </div>`
+
+        }
+        document.getElementById("RecentActivity").innerHTML = html
+
+
+
+
+
+
          const monthlyActivityCtx = document.getElementById('monthlyActivityChart').getContext('2d');
         new Chart(monthlyActivityCtx, {
             type: 'line',
@@ -229,3 +323,4 @@
 document.addEventListener("DOMContentLoaded",()=>{
     displayGraphs(1)
 })
+
